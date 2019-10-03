@@ -49,7 +49,6 @@ Answer: There are 134 aisles and most items are orderd from "fresh vegetables".
 
 ```{r}
 #Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
-
 instacart %>% 
   group_by(aisle) %>% 
   summarize(
@@ -72,4 +71,8 @@ instacart %>%
   ylab("The number of items ordered") +
   ggtitle("The number of items ordered in each aisle")
 ```
+
+**From the lollipop graph we can see clearly that "fresh vegetables" has the largest number of items ordered and "butter" has the least number number of itmes ordered among aisles with more than 10000 items ordered.**
+
+
 
