@@ -41,7 +41,7 @@ data("instacart")
 instacart %>% 
   group_by(aisle) %>% 
   summarize(
-    n = n(),
+    n = n()
   ) %>% 
   arrange(desc(n))
 ```
@@ -50,5 +50,26 @@ Answer: There are 134 aisles and most items are orderd from "fresh vegetables".
 ```{r}
 #Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 
+instacart %>% 
+  group_by(aisle) %>% 
+  summarize(
+    n = n()
+  ) %>% 
+  filter(n > 10000) %>% 
+  arrange(desc(n)) %>%
+  mutate(aisle = forcats::fct_reorder(aisle, n)) %>% 
+  ggplot(aes(x = aisle, y = n)) +
+  geom_segment(aes(x = aisle, xend = aisle, y = 10000, yend = n), 
+               color = "grey", 
+               size = 0.7) +
+  geom_point( color= "orange",
+              size=2 ) +
+  coord_flip() +
+  theme(
+    legend.position="none"
+  ) +
+  xlab("Aisle")+
+  ylab("The number of items ordered") +
+  ggtitle("The number of items ordered in each aisle")
 ```
 
