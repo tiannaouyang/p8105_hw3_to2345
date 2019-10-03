@@ -1,0 +1,54 @@
+---
+title: "p8105_hw3_to2345"
+author: "Tianna Ouyang"
+output: html_document
+---
+```{r setup, include=FALSE}
+library(tidyverse)
+library(viridis)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+
+```{r question1_load_dataset}
+# load instacart data from p8105.datasets
+library(p8105.datasets)
+data("instacart")
+```
+
+* The dataset instacart has `r nrow(instacart)` rows and `r ncol(instacart)` columns;
+* The variables in the datasets are: `r ls(instacart)`
+* There are `r nrow(distinct(instacart, order_id))` distinct order_id in the dataset;
+* There are `r nrow(distinct(instacart, user_id))` distinct user_id in the dataset;
+* There are `r nrow(distinct(instacart, department))` distinct department in the dataset, for example, `r unique(pull(instacart, department))[1:5]`;
+* There are `r nrow(distinct(instacart, aisle))` distinct aisel in the dataset, for example, `r unique(pull(instacart, aisle))[1:5]`.
+
+```{r}
+# How many aisles are there, and which aisles are the most items ordered from?
+instacart %>% 
+  group_by(aisle) %>% 
+  summarize(
+    n = n(),
+  ) %>% 
+  arrange(desc(n))
+```
+Answer: There are 134 aisles and most items are orderd from "fresh vegetables".
+
+```{r}
+#Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+
+```
+
