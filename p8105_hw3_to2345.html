@@ -400,7 +400,7 @@ instacart %&gt;%
 ##  9 soy lactosefree                26240
 ## 10 bread                          23635
 ## # … with 124 more rows</code></pre>
-<p>Answer: There are 134 aisles and most items are orderd from “fresh vegetables”.</p>
+<p><strong>There are 134 aisles and most items are orderd from “fresh vegetables”.</strong></p>
 <pre class="r"><code># Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 instacart %&gt;% 
   group_by(aisle) %&gt;% 
@@ -427,24 +427,130 @@ instacart %&gt;%
 <pre class="r"><code># Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
 instacart %&gt;% 
   filter(aisle == &quot;baking ingredients&quot;|aisle ==  &quot;dog food care&quot; | aisle == &quot;packaged vegetables fruits&quot;) %&gt;% 
-  group_by(product_name) %&gt;% 
+  group_by(aisle, product_name) %&gt;% 
   summarize(
     n = n()
-  )</code></pre>
-<pre><code>## # A tibble: 1,444 x 2
-##    product_name                                     n
-##    &lt;chr&gt;                                        &lt;int&gt;
-##  1 1 to 1 Gluten Free Baking Flour                 11
-##  2 1-to-1 Baking Flour, Gluten/Wheat/Dairy Free     7
-##  3 &quot;10\\\&quot; Graham Ready Crust&quot;                      5
-##  4 100% Cacao Natural Unsweetened                   2
-##  5 100% Cacao Unsweetened Chocolate Baking Bar      8
-##  6 100% Natural Stevia Sweetener                    2
-##  7 100% Natural Sweetener Zero Calorie Packets     36
-##  8 100% Natural Zero Calorie Sweetener              4
-##  9 100% Organic Einkorn  All-Purpose Flour          4
-## 10 100% Organic Premium Whole Wheat Flour          11
-## # … with 1,434 more rows</code></pre>
+  ) %&gt;% 
+  group_by(aisle) %&gt;% 
+  mutate(
+    order_ranking = min_rank(desc(n))
+  ) %&gt;% 
+  filter(order_ranking &lt;= 3) %&gt;%
+  arrange(aisle, order_ranking) %&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">aisle</th>
+<th align="left">product_name</th>
+<th align="right">n</th>
+<th align="right">order_ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">baking ingredients</td>
+<td align="left">Light Brown Sugar</td>
+<td align="right">499</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">baking ingredients</td>
+<td align="left">Pure Baking Soda</td>
+<td align="right">387</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">baking ingredients</td>
+<td align="left">Cane Sugar</td>
+<td align="right">336</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">dog food care</td>
+<td align="left">Snack Sticks Chicken &amp; Rice Recipe Dog Treats</td>
+<td align="right">30</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">dog food care</td>
+<td align="left">Organix Chicken &amp; Brown Rice Recipe</td>
+<td align="right">28</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">dog food care</td>
+<td align="left">Small Dog Biscuits</td>
+<td align="right">26</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">packaged vegetables fruits</td>
+<td align="left">Organic Baby Spinach</td>
+<td align="right">9784</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">packaged vegetables fruits</td>
+<td align="left">Organic Raspberries</td>
+<td align="right">5546</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">packaged vegetables fruits</td>
+<td align="left">Organic Blueberries</td>
+<td align="right">4966</td>
+<td align="right">3</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
+instacart %&gt;% 
+  filter(product_name == c(&quot;Pink Lady Apples&quot;,&quot;Coffee Ice Cream&quot;) ) %&gt;% 
+  group_by(product_name, order_dow) %&gt;% 
+  summarize(mean_hour = mean(order_hour_of_day)) %&gt;% 
+  pivot_wider(
+    names_from = order_dow,
+    values_from = mean_hour
+  ) %&gt;% 
+  knitr::kable(digits = 2)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">product_name</th>
+<th align="right">0</th>
+<th align="right">1</th>
+<th align="right">2</th>
+<th align="right">3</th>
+<th align="right">4</th>
+<th align="right">5</th>
+<th align="right">6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Coffee Ice Cream</td>
+<td align="right">13.22</td>
+<td align="right">15.00</td>
+<td align="right">15.33</td>
+<td align="right">15.40</td>
+<td align="right">15.17</td>
+<td align="right">10.33</td>
+<td align="right">12.35</td>
+</tr>
+<tr class="even">
+<td align="left">Pink Lady Apples</td>
+<td align="right">12.25</td>
+<td align="right">11.68</td>
+<td align="right">12.00</td>
+<td align="right">13.94</td>
+<td align="right">11.91</td>
+<td align="right">13.87</td>
+<td align="right">11.56</td>
+</tr>
+</tbody>
+</table>
 
 
 
