@@ -106,9 +106,31 @@ instacart %>%
     values_from = mean_hour
   ) %>% 
   knitr::kable(digits = 1)
-
 ```
 
+
+## Problem 2
+
+```{r}
+# Load the BRFSS data from the p8105.datasets package and data cleaning:
+    # format the data to use appropriate variable names;
+    # focus on the “Overall Health” topic
+    # include only responses from “Excellent” to “Poor”
+    # organize responses as a factor taking levels ordered from “Poor” to “Excellent”
+
+data("brfss_smart2010")
+janitor::clean_names(brfss_smart2010) %>% 
+  filter(
+    topic == "Overall Health",
+    response == c("Excellent", "Very good", "Good", "Fair", "Poor")
+  ) %>% 
+  mutate(
+    response = factor(response, levels = c("Poor", "Fair", "Good", "Very Good", "Excellent"))
+    )%>% 
+  arrange(response) %>% 
+  view()
+
+```
 
 
 
