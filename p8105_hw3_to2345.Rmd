@@ -1,7 +1,7 @@
 ---
 title: "p8105_hw3_to2345"
 author: "Tianna Ouyang"
-output: html_document
+output: github_document
 ---
 ```{r setup, include=FALSE}
 library(tidyverse)
