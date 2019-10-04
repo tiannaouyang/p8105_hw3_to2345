@@ -514,7 +514,7 @@ instacart %&gt;%
     names_from = order_dow,
     values_from = mean_hour
   ) %&gt;% 
-  knitr::kable(digits = 2)</code></pre>
+  knitr::kable(digits = 1)</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -531,26 +531,184 @@ instacart %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">Coffee Ice Cream</td>
-<td align="right">13.22</td>
-<td align="right">15.00</td>
-<td align="right">15.33</td>
-<td align="right">15.40</td>
-<td align="right">15.17</td>
-<td align="right">10.33</td>
-<td align="right">12.35</td>
+<td align="right">13.2</td>
+<td align="right">15.0</td>
+<td align="right">15.3</td>
+<td align="right">15.4</td>
+<td align="right">15.2</td>
+<td align="right">10.3</td>
+<td align="right">12.4</td>
 </tr>
 <tr class="even">
 <td align="left">Pink Lady Apples</td>
-<td align="right">12.25</td>
-<td align="right">11.68</td>
-<td align="right">12.00</td>
-<td align="right">13.94</td>
-<td align="right">11.91</td>
-<td align="right">13.87</td>
-<td align="right">11.56</td>
+<td align="right">12.2</td>
+<td align="right">11.7</td>
+<td align="right">12.0</td>
+<td align="right">13.9</td>
+<td align="right">11.9</td>
+<td align="right">13.9</td>
+<td align="right">11.6</td>
 </tr>
 </tbody>
 </table>
+<div id="problem-2" class="section level2">
+<h2>Problem 2</h2>
+<pre class="r"><code># Load the BRFSS data from the p8105.datasets package and data cleaning:
+    # format the data to use appropriate variable names;
+    # focus on the “Overall Health” topic
+    # include only responses from “Excellent” to “Poor”
+    # organize responses as a factor taking levels ordered from “Poor” to “Excellent”
+
+data(&quot;brfss_smart2010&quot;)
+brfss = janitor::clean_names(brfss_smart2010) %&gt;% 
+  filter(
+    topic == &quot;Overall Health&quot;,
+    response == c(&quot;Excellent&quot;, &quot;Very good&quot;, &quot;Good&quot;, &quot;Fair&quot;, &quot;Poor&quot;)
+  ) %&gt;% 
+  mutate(
+    response = factor(response, levels = c(&quot;Poor&quot;, &quot;Fair&quot;, &quot;Good&quot;, &quot;Very Good&quot;, &quot;Excellent&quot;))
+    )%&gt;% 
+  arrange(response) %&gt;% 
+  view()</code></pre>
+<pre class="r"><code># In 2002, which states were observed at 7 or more locations? What about in 2010?
+brfss %&gt;% 
+  filter(year == 2002) %&gt;% 
+  group_by(locationabbr) %&gt;% 
+  summarize(
+    n = n()
+  ) %&gt;% 
+  filter(n &gt;= 7) %&gt;% 
+  arrange(n) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">locationabbr</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">RI</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">GA</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">ME</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">OH</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">MA</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">NJ</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td align="left">PA</td>
+<td align="right">18</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In 2002, the states that were observed at 7 or more locations are: RI, GA, ME, OH, MA, NJ, PA</strong></p>
+<pre class="r"><code>brfss %&gt;% 
+  filter(year == 2010) %&gt;% 
+  group_by(locationabbr) %&gt;% 
+  summarize(
+    n = n()
+  ) %&gt;% 
+  filter(n &gt;= 7) %&gt;% 
+  arrange(n) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">locationabbr</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NC</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">PA</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">OH</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">SC</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">UT</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">CO</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">ID</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">MA</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">ME</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">TN</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">NY</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">CA</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">MD</td>
+<td align="right">16</td>
+</tr>
+<tr class="even">
+<td align="left">TX</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">FL</td>
+<td align="right">40</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In 2010, thestates that were observed at 7 or more locations are: NC, PA, OH, SC, UT, CO, ID, MA, ME, TN, NY, CA, MD, TX, FL.</strong></p>
+<pre class="r"><code># Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a “spaghetti” plot of this average value over time within a state (that is, make a plot showing a line for each state across years – the geom_line geometry and group aesthetic will help).
+
+brfss2 =
+  brfss %&gt;% 
+  filter(response == &quot;Excellent&quot;) %&gt;% 
+  group_by(locationabbr) %&gt;% 
+  mutate(mean_data_value = mean(data_value)) %&gt;% 
+  select(year, locationabbr, mean_data_value) %&gt;% 
+  view()</code></pre>
+</div>
 
 
 
