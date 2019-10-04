@@ -215,6 +215,102 @@ library(patchwork)
 
 
 
+## Problem 3
+Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+
+```{r}
+library(tidyverse)
+
+accel_data = 
+  read_csv("../data/accel_data.csv") %>% 
+    janitor::clean_names() %>%
+    mutate(
+      day = factor(day, levels = c("Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"))
+    ) %>% 
+    mutate(
+      weekend_indicator = case_when(
+        day != "Saturday" & day != "Sunday" ~ "0",
+        day == "Saturday" | day == "Sunday" ~ "1",
+        TRUE ~ ""
+      )
+    ) 
+
+
+accel_data_long = 
+        accel_data %>% 
+        pivot_longer(
+        activity_1:activity_1440,
+        names_to = "minute",
+        names_prefix = "activity_",
+        values_to = "activity"
+    ) 
+
+summarise_all(accel_data_long, typeof)
+
+accel_data_long = 
+  accel_data_long %>% 
+  mutate(
+    week = as.integer(week),
+    day_id = as.integer(day_id),
+    day = as.character(day),
+    minute = as.integer(minute),
+    activity = as.numeric(activity),
+    weekend_indicator = as.integer(weekend_indicator)
+  )
+  
+```
+
+* The resulting dataset has variables including: `r ls(accel_data_long)` with the variable class of `r summarise_all(accel_data_long, typeof)` respectively.
+* The resulting dataset has `r nrow(accel_data_long)` observations in total.
+
+
+Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
+
+```{r}
+
+accel_data_long %>% 
+  group_by(day_id) %>% 
+  mutate(total_activity = sum(activity)) %>%
+  ggplot(aes(x = day_id, y = total_activity)) +
+  geom_point()+
+  geom_line()
+
+accel_data_long %>% 
+  group_by(day_id) %>% 
+  mutate(total_activity = sum(activity)) %>%
+  select(week, day_id, day, weekend_indicator, total_activity) %>% 
+  distinct() %>% 
+  knitr::kable(digits = 1)
+  
+```
+
+**From the graph and the table showing the change on the total activity overdays we can barely see apparent trend. One trend that is captured is that the fluctuation of the total activity is getting larger with the increase of days. What's more, there seems like a trend of decreasing average activity with the increase of days from the graph.**
+
+
+Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph
+
+```{r}
+accel_data_long %>%
+  group_by(day, minute) %>% 
+  mutate(
+    average_activity_minute = mean(activity)
+  ) %>% 
+  ggplot(aes(x = minute, y = average_activity_minute, color = day)) +
+  geom_point(alpha = .05)+
+  geom_smooth()+
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+	viridis::scale_fill_viridis(discrete = TRUE)
+  
+```
+
+* Based on the graoh produced, there are several patterns that is observed:
+* There are difference in the time of the activity peak accross difference days, the most obvious difference detected is the peak of activity in Sunday and that in Friday.
+* Commonly, there is a trend of increasing activity until the 1250 min of that day, which is followed by a rapid decrease in activity
+* It looks like Saturday has the lowest activity level on average.
+
+
+
 
 
 
